@@ -13,6 +13,7 @@ class SnakeBody:
 
 class Snake:
     def __init__(self, env, length: int) -> None:
+        """"""
         self.env = env
         self.snakeBody: list[SnakeBody] = []
         self.length = length
@@ -32,6 +33,7 @@ class Snake:
     
 
     def addSnakeBodyOnBoard(self, env) -> None:
+        """"""
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # droite, gauche, bas, haut
         random.shuffle(directions)
         for dx, dy in directions:
@@ -56,13 +58,15 @@ class Snake:
     
 
     def printVision(self) -> None:
+        """"""
         print(f"Up = {self.vision['UP']}")
         print(f"Down = {self.vision['DOWN']}")
         print(f"Left = {self.vision['LEFT']}")
         print(f"Right = {self.vision['RIGHT']}")
 
 
-    def moveBody(self, board: np.ndarray, dir) -> None:
+    def moveBody(self, dir) -> None:
+        """"""
         for i in range(len(self.snakeBody) - 1, -1, -1):
             if self.snakeBody[i].value == 'H':
                 self.snakeBody[i].x += dir[0]
@@ -70,4 +74,3 @@ class Snake:
             else:
                 self.snakeBody[i].x = self.snakeBody[i - 1].x
                 self.snakeBody[i].y = self.snakeBody[i - 1].y
-            board[self.snakeBody[i].y, self.snakeBody[i].x] = self.snakeBody[i].value

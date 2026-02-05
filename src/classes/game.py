@@ -6,6 +6,7 @@ import keyboard
 class Game:
     """"""
     def __init__(self, boardXLength: int, boardYLength: int, snakeLength: int, winCondition: int) -> None:
+        """"""
         self.env = Env(boardXLength, boardYLength)
         self.snakeLength = snakeLength
         self.snake = Snake(self.env, self.snakeLength)
@@ -27,6 +28,7 @@ class Game:
 
 
     def mouvmentEvent(self, snake: Snake, env: Env, event: str) -> int:
+        """"""
         dir: dict[tuple] = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
         theoretical_x = snake.snakeBody[0].x + dir[event][0]
         theoretical_y = snake.snakeBody[0].y + dir[event][1]
@@ -34,11 +36,11 @@ class Game:
         if next_step == 'G':
             self.snakeEatGreenApple(self.snake, self.env)
         elif next_step == 'R':
-            self.snakeEatRedApple(self, self.snake, self.env)
+            self.snakeEatRedApple(self.snake, self.env)
         elif next_step == 'W':
             print('GAME OVER')
             exit()
-        snake.moveBody(env.board, dir[event])
+        snake.moveBody(dir[event])
         env.refreshBoard(snake)
         env.printBoard()
         snake.vision = snake.getVision(env.board)
