@@ -1,8 +1,8 @@
 from utils import randCol, randRow
+import os
 import numpy as np
 
-
-class Environment:
+class Env:
     def __init__(self, x_length: int, y_length: int):
         self.x_length = x_length
         self.y_length = y_length
@@ -43,3 +43,30 @@ class Environment:
             new_apple_x = randCol(self.x_length)
             new_apple_y = randRow(self.y_length)
         self.board[new_apple_y, new_apple_x] = apple_type
+
+    def refreshBoard(self, snake) -> np.ndarray:
+        for r in range(self.x_length):
+            for c in range (self.y_length):
+                if self.board[r, c] == 'H' or self.board[r, c] == 'S':
+                    self.board[r, c] = '0'
+        for bodyPart in snake.snakeBody:
+            self.board[bodyPart.y, bodyPart.x] = bodyPart.value
+
+    def printBoard(self) -> None:
+        os.system('clear')
+        for row in self.board:
+            for cell in row:
+                match cell:
+                    case 'W':
+                        print(f"\033[33m{cell}\033[0m", end=' ')
+                    case 'G':
+                        print(f"\033[32m{cell}\033[0m", end=' ')
+                    case 'R':
+                        print(f"\033[31m{cell}\033[0m", end=' ')
+                    case 'H':
+                        print(f"\033[34m{cell}\033[0m", end=' ')
+                    case 'S':
+                        print(f"\033[36m{cell}\033[0m", end=' ')
+                    case '0':
+                        print(f"{cell}", end=' ')
+            print()
