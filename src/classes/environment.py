@@ -44,6 +44,7 @@ class Env:
             new_apple_y = randRow(self.y_length)
         self.board[new_apple_y, new_apple_x] = apple_type
 
+
     def refreshBoard(self, snake) -> np.ndarray:
         for r in range(self.x_length):
             for c in range (self.y_length):
@@ -51,6 +52,7 @@ class Env:
                     self.board[r, c] = '0'
         for bodyPart in snake.snakeBody:
             self.board[bodyPart.y, bodyPart.x] = bodyPart.value
+
 
     def printBoard(self) -> None:
         os.system('clear')

@@ -1,67 +1,85 @@
 from classes.snake import Snake
 from classes.environment import Env
-import keyboard
+import pygame
+
+CELL_SIZE = 50
+GRID_WIDTH = 32
+GRID_WEIGHT = 32
+
+WINDOW_SIZE = (GRID_WIDTH * CELL_SIZE, GRID_WEIGHT * CELL_SIZE)
+
+clock = pygame.time.Clock()
 
 
 class Game:
-    """"""
     def __init__(self, boardXLength: int, boardYLength: int, snakeLength: int, winCondition: int) -> None:
         """"""
         self.env = Env(boardXLength, boardYLength)
         self.snakeLength = snakeLength
         self.snake = Snake(self.env, self.snakeLength)
         self.winCondition = winCondition
+        pygame.init()
+        self._running = True
+        self.size = self.weight, self.height = 640, 400
+        self.screen = pygame.display.set_mode(self.size)
 
 
-    def gameLoop(self, snake: Snake, env: Env) -> None:
-        env.printBoard()
-        snake.printVision()
-        while True:
-            e = keyboard.read_event()
-            if e.event_type == 'down':
-                self.mouvmentEvent(snake, env, e.name)   
-                sc = e.scan_code
-                while True:
-                    u = keyboard.read_event()
-                    if u.event_type == 'up' and u.scan_code == sc:
-                        break
-
-
-    def mouvmentEvent(self, snake: Snake, env: Env, event: str) -> int:
-        """"""
-        dir: dict[tuple] = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
-        theoretical_x = snake.snakeBody[0].x + dir[event][0]
-        theoretical_y = snake.snakeBody[0].y + dir[event][1]
-        next_step = env.board[theoretical_y, theoretical_x]
-        if next_step == 'G':
-            self.snakeEatGreenApple(self.snake, self.env)
-        elif next_step == 'R':
-            self.snakeEatRedApple(self.snake, self.env)
-        elif next_step == 'W':
-            print('GAME OVER')
-            exit()
-        snake.moveBody(dir[event])
-        env.refreshBoard(snake)
-        env.printBoard()
-        snake.vision = snake.getVision(env.board)
-        snake.printVision()
-
-
-    def snakeEatGreenApple(self, snake: Snake, env: Env) -> int:
-        """"""
-        snake.addSnakeBodyOnBoard(env)
-        snake.length += 1
-        if len(snake.snakeBody) >= self.winCondition:
+    def onEvent(self, event) -> None:
+        if event.type == pygame.QUIT:
+            self._running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.snake.mouvmentEvent("up")
+            elif event.key == pygame.K_DOWN:
+                self.snake.mouvmentEvent("down")
+            elif event.key == pygame.K_RIGHT:
+                self.snake.mouvmentEvent("right")
+            elif event.key == pygame.K_LEFT:
+                self.snake.mouvmentEvent("left")
+        if self.snake.length >= self.winCondition:
             print("YOU WIN ! CONGRATULATIONS !")
             exit()
-        env.addAppleOnBoard('G')
-
-
-    def snakeEatRedApple(self, snake: Snake, env: Env) -> int:
-        """"""
-        snake.snakeBody.pop()
-        snake.length -= 1
-        if len(snake.snakeBody) == 0:
+        if self.snake.length == 0:
             print('GAME OVER')
             exit()
-        env.addAppleOnBoard('R')
+
+
+    def onCleanup(self) -> None:
+        pygame.quit()
+
+
+    def onExecute(self) -> None:
+        self.env.printBoard()
+        self.snake.printVision()
+        while(self._running):
+            for event in pygame.event.get():
+                self.onEvent(event)
+            self.screen.fill((0, 0, 0))
+            self.drawGrid(self.screen, self.env.board)
+            pygame.display.flip()
+            clock.tick(10)
+        self.onCleanup()
+
+    
+    def drawGrid(self, screen, grid) -> None:
+        for y, row in enumerate(grid):
+            for x, cell in enumerate(row):
+                color = [0, 0, 0]
+                if cell == 'W':
+                    color = [255, 255, 255] # Wall
+                elif cell == 'H':
+                    color = [123, 132, 0] # Snake head
+                elif cell == 'S':
+                    color = [0, 0, 255] # Snake body
+                elif cell == 'G':
+                    color = [0, 255, 0] # Green apple
+                elif cell == 'R':
+                    color = [255, 0, 0] # Red apple
+
+                rect = pygame.Rect(
+                    x * CELL_SIZE,
+                    y * CELL_SIZE,
+                    CELL_SIZE,
+                    CELL_SIZE
+                )
+                pygame.draw.rect(screen, color, rect)

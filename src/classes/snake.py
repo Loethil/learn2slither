@@ -45,6 +45,47 @@ class Snake:
                     break
 
 
+    def mouvmentEvent(self, event: str) -> int:
+        """Trouver un moyen pour qu'il ne puisse pas allez dans la direction de son cou"""
+        dir: dict[tuple] = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
+        theoretical_x = self.snakeBody[0].x + dir[event][0]
+        theoretical_y = self.snakeBody[0].y + dir[event][1]
+        next_step = self.env.board[theoretical_y, theoretical_x]
+        if next_step == 'G' or next_step == 'R':
+            self.snakeEatApple(next_step) 
+        elif next_step != '0':
+            print('GAME OVER')
+            exit()
+        self.moveBody(dir[event])
+        self.env.refreshBoard(self)
+        self.env.printBoard()
+        self.vision = self.getVision(self.env.board)
+        self.printVision()
+
+
+    def moveBody(self, dir) -> None:
+        """"""
+        for i in range(len(self.snakeBody) - 1, -1, -1):
+            if self.snakeBody[i].value == 'H':
+                self.snakeBody[i].x += dir[0]
+                self.snakeBody[i].y += dir[1]
+            else:
+                self.snakeBody[i].x = self.snakeBody[i - 1].x
+                self.snakeBody[i].y = self.snakeBody[i - 1].y
+
+
+    def snakeEatApple(self, apple: str) -> int:
+        """"""
+        if apple == 'G':
+            self.addSnakeBodyOnBoard(self.env)
+            self.length += 1
+            self.env.addAppleOnBoard('G') #sometime dont spawn
+        elif apple == 'R':
+            self.snakeBody.pop()
+            self.length -= 1
+            self.env.addAppleOnBoard('R') #sometime dont spawn
+
+
     def getVision(self, board: np.ndarray) -> dict[str, list]:
         posX = self.snakeBody[0].x
         posY = self.snakeBody[0].y
@@ -63,14 +104,3 @@ class Snake:
         print(f"Down = {self.vision['DOWN']}")
         print(f"Left = {self.vision['LEFT']}")
         print(f"Right = {self.vision['RIGHT']}")
-
-
-    def moveBody(self, dir) -> None:
-        """"""
-        for i in range(len(self.snakeBody) - 1, -1, -1):
-            if self.snakeBody[i].value == 'H':
-                self.snakeBody[i].x += dir[0]
-                self.snakeBody[i].y += dir[1]
-            else:
-                self.snakeBody[i].x = self.snakeBody[i - 1].x
-                self.snakeBody[i].y = self.snakeBody[i - 1].y

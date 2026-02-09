@@ -12,7 +12,7 @@ def main() -> None:
         parser.add_argument("-load", type=str, default="models/defaut.txt", help="save the model to a custom path")
         # args = parser.parse_args()
         game = Game(10, 10, 3, 10)
-        game.gameLoop(game.snake, game.env)
+        game.onExecute()
 
     except Exception as e:
         print(f"Error: {e}")
