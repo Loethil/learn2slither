@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 from classes.game import Game
 
-
 def main() -> None:
     try:
         parser = ArgumentParser(prog="main")

@@ -1,74 +1,92 @@
-from utils import randCol, randRow
-import os
 import numpy as np
+import random
+from dataclasses import dataclass
+from classes.snake import Snake
+
+def randRow(y) -> int:
+    return np.random.randint(1, y - 1)
+
+
+def randCol(x) -> int:
+    return np.random.randint(1, x - 1)
+
+
+@dataclass
+class SnakeBody:
+    value: str = 'S'
+    x: int = 0
+    y: int = 0
 
 class Env:
-    def __init__(self, x_length: int, y_length: int):
-        self.x_length = x_length
-        self.y_length = y_length
-        
-        self.board = self.createBoard(x_length, y_length)
+    def __init__(self, boardX, boardY, snakeLength) -> None:
+        """"""
+        #BOARD
+        self.boardX: int = boardX
+        self.boardY: int  = boardY
+        self.board: np.ndarray = self.createBoard()
         self.addAppleOnBoard('G')
         self.addAppleOnBoard('G')
         self.addAppleOnBoard('R')
+        #SNAKE
+        self.snakeLength = snakeLength
+        self.snake: Snake = Snake(self.createSnakeBody())
 
-
-    def createBoard(self, x_length: int, y_length: int) -> np.ndarray:
-        if x_length < 10 or y_length < 10:
-            raise ValueError("Board cannot be less than 10x10")
-        board = np.empty((x_length, y_length), dtype=str)
-        for r in range(x_length):
-            for c in range (y_length):
+    ###BOARD###
+    def createBoard(self) -> np.ndarray:
+        board = np.empty((self.boardX, self.boardY), dtype=str)
+        for r in range(self.boardX):
+            for c in range (self.boardY):
                 board[r, c] = '0'
-                
-        for c in range(x_length):
+        for c in range(self.boardX):
             board[0, c] = 'W'
-            board[y_length - 1, c] = 'W'
-
-        for r in range(y_length):
+            board[self.boardY - 1, c] = 'W'
+        for r in range(self.boardY):
             board[r, 0] = 'W'
-            board[r, x_length - 1] = 'W'
-
+            board[r, self.boardX - 1] = 'W'
         return board
-
-
-    def addAppleOnBoard(self, apple_type: str) -> None:
-        if apple_type not in {'G', 'R'}:
-            raise ValueError("apple_type must be one of {'G','R'}")
-
-        new_apple_x: int = randCol(self.x_length)
-        new_apple_y: int = randRow(self.y_length)
+    
+    def addAppleOnBoard(self, appleType: str) -> None:
+        newAppleX: int = randCol(self.boardX)
+        newAppleY: int = randRow(self.boardY)
         
-        while self.board[new_apple_y, new_apple_x] != '0':         
-            new_apple_x = randCol(self.x_length)
-            new_apple_y = randRow(self.y_length)
-        self.board[new_apple_y, new_apple_x] = apple_type
+        if self.board[newAppleY, newAppleX] in ['R', 'G', 'H', 'S']:
+            while self.board[newAppleY, newAppleX] != '0':
+                newAppleX = randCol(self.boardX)
+                newAppleY = randRow(self.boardY)
+        self.board[newAppleY, newAppleX] = appleType
 
-
-    def refreshBoard(self, snake) -> np.ndarray:
-        for r in range(self.x_length):
-            for c in range (self.y_length):
+    def refreshBoard(self) -> None:
+        for r in range(self.boardY):
+            for c in range (self.boardX):
                 if self.board[r, c] == 'H' or self.board[r, c] == 'S':
                     self.board[r, c] = '0'
-        for bodyPart in snake.snakeBody:
+        for bodyPart in self.snake.snakeBody:
             self.board[bodyPart.y, bodyPart.x] = bodyPart.value
 
+    ###SNAKE###
+    def createSnakeBody(self) -> list[SnakeBody]:
+        newSnakeBody: list[SnakeBody] = []
+        snakeX: int = randCol(self.boardX)
+        snakeY: int = randRow(self.boardY)
 
-    def printBoard(self) -> None:
-        os.system('clear')
-        for row in self.board:
-            for cell in row:
-                match cell:
-                    case 'W':
-                        print(f"\033[33m{cell}\033[0m", end=' ')
-                    case 'G':
-                        print(f"\033[32m{cell}\033[0m", end=' ')
-                    case 'R':
-                        print(f"\033[31m{cell}\033[0m", end=' ')
-                    case 'H':
-                        print(f"\033[34m{cell}\033[0m", end=' ')
-                    case 'S':
-                        print(f"\033[36m{cell}\033[0m", end=' ')
-                    case '0':
-                        print(f"{cell}", end=' ')
-            print()
+        if self.board[snakeY, snakeX] in ['R', 'G', 'H', 'S', 'W']:
+            while self.board[snakeY, snakeX] != '0':
+                snakeX = randCol(self.boardX)
+                snakeY = randRow(self.boardY)
+        newSnakeBody.append(SnakeBody(value='H', x=snakeX, y=snakeY))
+        self.board[snakeY, snakeX] = 'H'
+        for _ in range(1, self.snakeLength, 1):
+            newSnakeBody.append(self.addBodypartOnBoard(newSnakeBody[-1]))
+        return newSnakeBody
+    
+    def addBodypartOnBoard(self, lastBodyPart: SnakeBody) -> SnakeBody:
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # droite, gauche, bas, haut
+        random.shuffle(directions)
+        for dx, dy in directions:
+            newBodyPartX, newBodyPartY = lastBodyPart.x + dx, lastBodyPart.y + dy
+            if 0 <= newBodyPartX < self.boardX and 0 <= newBodyPartY < self.boardY:
+                if self.board[newBodyPartY, newBodyPartX] == '0':
+                    self.board[newBodyPartY, newBodyPartX] = 'S'
+                    return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
+
+    
