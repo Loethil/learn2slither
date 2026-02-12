@@ -2,7 +2,7 @@ import os
 import pygame
 
 def printBoard(board) -> None:
-    # os.system('clear')
+    os.system('clear')
     for row in board:
         for cell in row:
             match cell:
@@ -19,6 +19,14 @@ def printBoard(board) -> None:
                 case '0':
                     print(f"{cell}", end=' ')
         print()
+
+
+def printSnakeVision(snakeVision: dict[str, list]) -> None:
+    """"""
+    print(f"Up = {snakeVision['UP']}")
+    print(f"Down = {snakeVision['DOWN']}")
+    print(f"Left = {snakeVision['LEFT']}")
+    print(f"Right = {snakeVision['RIGHT']}")
 
 
 def drawGrid(screen, grid, CELL_SIZE) -> None:

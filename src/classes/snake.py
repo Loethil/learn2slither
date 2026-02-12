@@ -10,7 +10,7 @@ class Snake:
     def __init__(self, snakeBody: list[SnakeBody]):
         self.snakeBody: list[SnakeBody] = snakeBody
         self.length: int = len(snakeBody)
-        self.vision = 0 # a implementer ou alors uniquement l'agent la ?
+        self.vision = None
     
 
     #fonction pour avancer d'une case selon une direction donner
@@ -34,24 +34,3 @@ class Snake:
     def grow(self, newBodyPart) -> None:
         self.snakeBody.append(newBodyPart)
         self.length = len(self.snakeBody)
-
-
-
-    # def getVision(self, board: np.ndarray) -> dict[str, list]:
-    #     posX = self.snakeBody[0].x
-    #     posY = self.snakeBody[0].y
-
-    #     return {
-    #         'UP': [str(board[y][posX]) for y in range(posY - 1, -1, -1)],
-    #         'DOWN': [str(board[y][posX]) for y in range(posY + 1, len(board))],
-    #         'LEFT': [str(board[posY][x]) for x in range(posX - 1, -1, -1)],
-    #         'RIGHT': [str(board[posY][x]) for x in range(posX + 1, len(board[posX]))]
-    #     }
-    
-
-    # def printVision(self) -> None:
-    #     """"""
-    #     print(f"Up = {self.vision['UP']}")
-    #     print(f"Down = {self.vision['DOWN']}")
-    #     print(f"Left = {self.vision['LEFT']}")
-    #     print(f"Right = {self.vision['RIGHT']}")

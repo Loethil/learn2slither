@@ -3,6 +3,7 @@ import random
 from dataclasses import dataclass
 from classes.snake import Snake
 
+
 def randRow(y) -> int:
     return np.random.randint(1, y - 1)
 
@@ -17,6 +18,7 @@ class SnakeBody:
     x: int = 0
     y: int = 0
 
+
 class Env:
     def __init__(self, boardX, boardY, snakeLength) -> None:
         """"""
@@ -30,6 +32,8 @@ class Env:
         #SNAKE
         self.snakeLength = snakeLength
         self.snake: Snake = Snake(self.createSnakeBody())
+        self.snake.vision = self.getSnakeVision()
+
 
     ###BOARD###
     def createBoard(self) -> np.ndarray:
@@ -44,7 +48,8 @@ class Env:
             board[r, 0] = 'W'
             board[r, self.boardX - 1] = 'W'
         return board
-    
+
+
     def addAppleOnBoard(self, appleType: str) -> None:
         newAppleX: int = randCol(self.boardX)
         newAppleY: int = randRow(self.boardY)
@@ -55,6 +60,7 @@ class Env:
                 newAppleY = randRow(self.boardY)
         self.board[newAppleY, newAppleX] = appleType
 
+
     def refreshBoard(self) -> None:
         for r in range(self.boardY):
             for c in range (self.boardX):
@@ -62,6 +68,7 @@ class Env:
                     self.board[r, c] = '0'
         for bodyPart in self.snake.snakeBody:
             self.board[bodyPart.y, bodyPart.x] = bodyPart.value
+
 
     ###SNAKE###
     def createSnakeBody(self) -> list[SnakeBody]:
@@ -78,7 +85,8 @@ class Env:
         for _ in range(1, self.snakeLength, 1):
             newSnakeBody.append(self.addBodypartOnBoard(newSnakeBody[-1]))
         return newSnakeBody
-    
+
+
     def addBodypartOnBoard(self, lastBodyPart: SnakeBody) -> SnakeBody:
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # droite, gauche, bas, haut
         random.shuffle(directions)
@@ -89,4 +97,15 @@ class Env:
                     self.board[newBodyPartY, newBodyPartX] = 'S'
                     return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
 
+
+    def getSnakeVision(self) -> dict[str, list]:
+        posX = self.snake.snakeBody[0].x
+        posY = self.snake.snakeBody[0].y
+
+        return {
+            'UP': [str(self.board[y][posX]) for y in range(posY - 1, -1, -1)],
+            'DOWN': [str(self.board[y][posX]) for y in range(posY + 1, self.boardY)],
+            'LEFT': [str(self.board[posY][x]) for x in range(posX - 1, -1, -1)],
+            'RIGHT': [str(self.board[posY][x]) for x in range(posX + 1, self.boardX)]
+        }
     
