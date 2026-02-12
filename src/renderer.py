@@ -2,7 +2,7 @@ import os
 import pygame
 
 def printBoard(board) -> None:
-    os.system('clear')
+    # os.system('clear')
     for row in board:
         for cell in row:
             match cell:
@@ -24,7 +24,7 @@ def printBoard(board) -> None:
 def drawGrid(screen, grid, CELL_SIZE) -> None:
     for y, row in enumerate(grid):
         for x, cell in enumerate(row):
-            color = [0, 0, 0]
+            color = [100, 100, 100]
             if cell == 'W':
                 color = [255, 255, 255] # Wall
             elif cell == 'H':

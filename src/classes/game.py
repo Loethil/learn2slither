@@ -13,7 +13,6 @@ clock = pygame.time.Clock()
 
 class Game:
     def __init__(self, boardXLength: int, boardYLength: int, snakeLength: int, winCondition: int) -> None:
-        """"""
         self.env = Env(boardXLength, boardYLength, snakeLength)
         self.winCondition = winCondition
         pygame.init()
@@ -27,7 +26,6 @@ class Game:
         if self.env.snake.length > 1:
             if nextX == self.env.snake.snakeBody[1].x and nextY == self.env.snake.snakeBody[1].y:
                 return
-        self.env.snake.advance(dir)
         if self.env.board[nextY, nextX] == 'W' or self.env.board[nextY, nextX] == 'S':
             print("YOU LOSE! GAME OVER")
             self.onCleanup()
@@ -43,7 +41,8 @@ class Game:
             if self.env.snake.length == 0:
                 print("YOU LOSE! GAME OVER")
                 self.onCleanup()
-        
+        self.env.snake.advance(dir)
+
 
     def onEvent(self, event) -> None:
         if event.type == pygame.QUIT:
@@ -60,13 +59,13 @@ class Game:
             self.env.refreshBoard()
             printBoard(self.env.board)
 
+
     def onCleanup(self) -> None:
         pygame.quit()
         exit()
 
 
     def onExecute(self) -> None:
-        # self.snake.printVision()
         printBoard(self.env.board)
         while(self._running):
             for event in pygame.event.get():
