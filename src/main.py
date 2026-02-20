@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from classes.game import Game
 
 def main() -> None:
-    try:
+    # try:
         parser = ArgumentParser(prog="main")
         parser.add_argument("-sessions", type=int, help="number of sessions")
         parser.add_argument("-visual", action="store_true", help="visual interface, if False display in terminal")
@@ -13,8 +13,8 @@ def main() -> None:
         game = Game(10, 10, 3, 10)
         game.onExecute()
 
-    except Exception as e:
-        print(f"Error: {e}")
+    # except Exception as e:
+    #     print(f"Error: {e}")
 
 
 if __name__ == "__main__":

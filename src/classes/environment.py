@@ -37,9 +37,9 @@ class Env:
 
     ###BOARD###
     def createBoard(self) -> np.ndarray:
-        board = np.empty((self.boardX, self.boardY), dtype=str)
-        for r in range(self.boardX):
-            for c in range (self.boardY):
+        board = np.empty((self.boardY, self.boardX), dtype=str)
+        for r in range(self.boardY):
+            for c in range (self.boardX):
                 board[r, c] = '0'
         for c in range(self.boardX):
             board[0, c] = 'W'

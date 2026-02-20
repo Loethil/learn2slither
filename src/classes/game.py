@@ -2,7 +2,7 @@ import pygame
 import time
 from classes.environment import Env
 from classes.agent import Agent
-from renderer import drawGrid
+from renderer import drawGrid, printBoard
 
 CELL_SIZE = 50
 GRID_WIDTH = 32
@@ -10,9 +10,14 @@ GRID_WEIGHT = 32
 
 WINDOW_SIZE = (GRID_WIDTH * CELL_SIZE, GRID_WEIGHT * CELL_SIZE)
 
+UP = (0, -1)
+DOWN = (0, 1)
+LEFT = (-1, 0)
+RIGHT = (1, 0)
+
 clock = pygame.time.Clock()
 
-
+#REGLER LE PROBLEME DES DEPLACEMENTS FIXE QUAND DIRECTIONS CHOISIS VERS COU DU SERPENT
 class Game:
     def __init__(self, boardXLength: int, boardYLength: int, snakeLength: int, winCondition: int) -> None:
         self.boardXLength = boardXLength
@@ -31,29 +36,30 @@ class Game:
         while(self._running):
             for event in pygame.event.get():
                 self.onEvent(event)
-            self.agentDecision()
+            self.onAgentDecision()
             drawGrid(self.screen, self.env.board, CELL_SIZE)
             pygame.display.flip()
             clock.tick(10)
         self.onCleanup()
 
 
-    def agentDecision(self) -> None:
+    def onAgentDecision(self) -> None:
         snakeMeal: str = ""
         direction = self.agent.decision(self.env.snake.vision)
         match direction:
-            case (0, -1):
-                snakeMeal = self.onMoved(direction)
-            case (0, 1):
-                snakeMeal = self.onMoved(direction)
-            case (-1, 0):
-                snakeMeal = self.onMoved(direction)
-            case (1, 0):
-                snakeMeal = self.onMoved(direction)
+            case 0:
+                snakeMeal = self.onMoved(UP)
+            case 1:
+                snakeMeal = self.onMoved(DOWN)
+            case 2:
+                snakeMeal = self.onMoved(LEFT)
+            case 3:
+                snakeMeal = self.onMoved(RIGHT)
         self.checkWinLoseConditions(snakeMeal)
         self.env.refreshBoard()
+        printBoard(self.env.board)
         self.env.snake.vision = self.env.getSnakeVision()
-        time.sleep(0.5)
+        time.sleep(0.3)
 
 
     def onEvent(self, event) -> None:

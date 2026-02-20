@@ -11,12 +11,11 @@ class Agent:
         self.gamma: float = 0.9
         self.alpha: float = 0.99
 
-    def decision(self, state: tuple[tuple])  -> tuple[int, int]:
-        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    def decision(self, state: tuple[tuple])  -> int:
         if self.epsilon < np.random.rand() and np.max(self.Qtable[state]) != 0:
-            action = directions[np.argmax(self.Qtable[state])]
+            action = np.argmax(self.Qtable[state])
         else:
-            action = random.choice(directions)
+            action = random.randint(0, 3)
 
         if self.epsilon > self.epsilonMin:
             self.epsilon *= self.alpha
