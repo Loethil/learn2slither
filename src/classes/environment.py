@@ -88,7 +88,7 @@ class Env:
 
 
     def addBodypartOnBoard(self, lastBodyPart: SnakeBody) -> SnakeBody:
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # droite, gauche, bas, haut
+        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         random.shuffle(directions)
         for dx, dy in directions:
             newBodyPartX, newBodyPartY = lastBodyPart.x + dx, lastBodyPart.y + dy
@@ -98,14 +98,13 @@ class Env:
                     return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
 
 
-    def getSnakeVision(self) -> dict[str, list]:
+    def getSnakeVision(self) -> tuple[tuple]:
         posX = self.snake.snakeBody[0].x
         posY = self.snake.snakeBody[0].y
 
-        return {
-            'UP': [str(self.board[y][posX]) for y in range(posY - 1, -1, -1)],
-            'DOWN': [str(self.board[y][posX]) for y in range(posY + 1, self.boardY)],
-            'LEFT': [str(self.board[posY][x]) for x in range(posX - 1, -1, -1)],
-            'RIGHT': [str(self.board[posY][x]) for x in range(posX + 1, self.boardX)]
-        }
-    
+        up = tuple(str(self.board[y][posX]) for y in range(posY - 1, -1, -1))
+        down = tuple(str(self.board[y][posX]) for y in range(posY + 1, self.boardY))
+        left = tuple(str(self.board[posY][x]) for x in range(posX - 1, -1, -1))
+        right = tuple(str(self.board[posY][x]) for x in range(posX + 1, self.boardX))
+
+        return (up, down, left, right)

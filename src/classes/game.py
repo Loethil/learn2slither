@@ -1,6 +1,8 @@
 import pygame
+import time
 from classes.environment import Env
-from renderer import drawGrid, printBoard, printSnakeVision
+from classes.agent import Agent
+from renderer import drawGrid
 
 CELL_SIZE = 50
 GRID_WIDTH = 32
@@ -18,42 +20,45 @@ class Game:
         self.snakeLength = snakeLength
         self.env = Env(boardXLength, boardYLength, snakeLength)
         self.winCondition = winCondition
+        self.agent = Agent(10)
         pygame.init()
         self._running = True
         self.screen = pygame.display.set_mode(WINDOW_SIZE)
 
 
     def onExecute(self) -> None:
-        printBoard(self.env.board)
-        printSnakeVision(self.env.snake.vision)
+        self.screen.fill((0, 0, 0))
         while(self._running):
             for event in pygame.event.get():
                 self.onEvent(event)
-            self.screen.fill((0, 0, 0))
+            self.agentDecision()
             drawGrid(self.screen, self.env.board, CELL_SIZE)
             pygame.display.flip()
             clock.tick(10)
         self.onCleanup()
 
 
-    def onEvent(self, event) -> None:
+    def agentDecision(self) -> None:
         snakeMeal: str = ""
+        direction = self.agent.decision(self.env.snake.vision)
+        match direction:
+            case (0, -1):
+                snakeMeal = self.onMoved(direction)
+            case (0, 1):
+                snakeMeal = self.onMoved(direction)
+            case (-1, 0):
+                snakeMeal = self.onMoved(direction)
+            case (1, 0):
+                snakeMeal = self.onMoved(direction)
+        self.checkWinLoseConditions(snakeMeal)
+        self.env.refreshBoard()
+        self.env.snake.vision = self.env.getSnakeVision()
+        time.sleep(0.5)
+
+
+    def onEvent(self, event) -> None:
         if event.type == pygame.QUIT:
             self._running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                snakeMeal = self.onMoved((0, -1))
-            elif event.key == pygame.K_DOWN:
-                snakeMeal = self.onMoved((0, 1))
-            elif event.key == pygame.K_RIGHT:
-                snakeMeal = self.onMoved((1, 0))
-            elif event.key == pygame.K_LEFT:
-                snakeMeal = self.onMoved((-1, 0))
-            self.checkWinLoseConditions(snakeMeal)
-            self.env.refreshBoard()
-            self.env.snake.vision = self.env.getSnakeVision()
-            printBoard(self.env.board)
-            printSnakeVision(self.env.snake.vision)
 
 
     def onMoved(self, dir: tuple[int, int]) -> str:
