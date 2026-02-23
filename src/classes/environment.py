@@ -94,6 +94,30 @@ class Env:
                     return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
 
 
+    def step(self, dir) -> tuple[float, bool]:
+        nextY = self.snake.snakeBody[0].y + dir[0]
+        nextX = self.snake.snakeBody[0].x + dir[1]
+        snakeMeal = self.board[nextY, nextX]
+
+        if snakeMeal == 'W' or snakeMeal == 'S':
+            return (-1.0, True)
+        
+        self.snake.advance(dir)
+        self.refreshBoard()
+        if snakeMeal == 'G':
+            self.snake.grow(self.addBodypartOnBoard(self.snake.snakeBody[-1]))
+            self.addAppleOnBoard('G')
+            return (1.0, False)
+        elif snakeMeal == 'R':
+            self.snake.shrink()
+            self.addAppleOnBoard('R')
+            if self.snake.length == 0:
+                return (-1.0, True)
+            return (-0.5, False)
+        
+        return (-0.1, False)
+
+
     def look(self, start, delta) -> tuple:
         row, col = start
         distance = 0

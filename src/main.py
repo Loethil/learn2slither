@@ -9,8 +9,8 @@ def main() -> None:
         parser.add_argument("-dontlearn", action="store_true", help="prevents the model from training")
         parser.add_argument("-step-by-step", action="store_true", help="step by step visual for debugging purpose")
         parser.add_argument("-load", type=str, default="models/defaut.txt", help="save the model to a custom path")
-        # args = parser.parse_args()
-        game = Game(10, 10, 3, 10)
+        args = parser.parse_args()
+        game = Game(10, 10, 3, 10, args.visual)
         game.onExecute()
 
     # except Exception as e:
