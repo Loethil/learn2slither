@@ -44,22 +44,20 @@ class Game:
 
 
     def onAgentDecision(self) -> None:
-        snakeMeal: str = ""
         direction = self.agent.decision(self.env.snake.vision)
         match direction:
             case 0:
-                snakeMeal = self.onMoved(UP)
+                self.onMoved(UP)
             case 1:
-                snakeMeal = self.onMoved(DOWN)
+                self.onMoved(DOWN)
             case 2:
-                snakeMeal = self.onMoved(LEFT)
+                self.onMoved(LEFT)
             case 3:
-                snakeMeal = self.onMoved(RIGHT)
-        self.checkWinLoseConditions(snakeMeal)
+                self.onMoved(RIGHT)
         self.env.refreshBoard()
         printBoard(self.env.board)
         self.env.snake.vision = self.env.getSnakeVision()
-        time.sleep(0.3)
+        time.sleep(0.2)
 
 
     def onEvent(self, event) -> None:
@@ -67,23 +65,21 @@ class Game:
             self._running = False
 
 
-    def onMoved(self, dir: tuple[int, int]) -> str:
+    def onMoved(self, dir: tuple[int, int]) -> None:
         nextX = self.env.snake.snakeBody[0].x + dir[0]
         nextY = self.env.snake.snakeBody[0].y + dir[1]
+        snakeMeal = self.env.board[nextY, nextX]
         if self.env.snake.length > 1:
             if nextX == self.env.snake.snakeBody[1].x and nextY == self.env.snake.snakeBody[1].y:
                 return
-        if self.env.board[nextY, nextX] == 'G':
+        self.env.snake.advance(dir)
+        self.env.refreshBoard()
+        if snakeMeal == 'G':
             self.env.snake.grow(self.env.addBodypartOnBoard(self.env.snake.snakeBody[-1]))
             self.env.addAppleOnBoard('G')
-        elif self.env.board[nextY, nextX] == 'R':
+        elif snakeMeal == 'R':
             self.env.snake.shrink()
             self.env.addAppleOnBoard('R')
-        self.env.snake.advance(dir)
-        return (self.env.board[nextY, nextX])
-
-
-    def checkWinLoseConditions(self, snakeMeal: str) -> None:
         if snakeMeal == 'W' or snakeMeal == 'S' or self.env.snake.length >= self.winCondition or self.env.snake.length == 0:
             self.resetGame()
 

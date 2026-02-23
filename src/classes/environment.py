@@ -22,20 +22,17 @@ class SnakeBody:
 class Env:
     def __init__(self, boardX, boardY, snakeLength) -> None:
         """"""
-        #BOARD
         self.boardX: int = boardX
         self.boardY: int  = boardY
         self.board: np.ndarray = self.createBoard()
-        self.addAppleOnBoard('G')
-        self.addAppleOnBoard('G')
-        self.addAppleOnBoard('R')
-        #SNAKE
         self.snakeLength = snakeLength
         self.snake: Snake = Snake(self.createSnakeBody())
         self.snake.vision = self.getSnakeVision()
+        self.addAppleOnBoard('G')
+        self.addAppleOnBoard('G')
+        self.addAppleOnBoard('R')
 
 
-    ###BOARD###
     def createBoard(self) -> np.ndarray:
         board = np.empty((self.boardY, self.boardX), dtype=str)
         for r in range(self.boardY):
@@ -70,7 +67,6 @@ class Env:
             self.board[bodyPart.y, bodyPart.x] = bodyPart.value
 
 
-    ###SNAKE###
     def createSnakeBody(self) -> list[SnakeBody]:
         newSnakeBody: list[SnakeBody] = []
         snakeX: int = randCol(self.boardX)
@@ -96,6 +92,8 @@ class Env:
                 if self.board[newBodyPartY, newBodyPartX] == '0':
                     self.board[newBodyPartY, newBodyPartX] = 'S'
                     return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
+        print(self.board)
+        print("error can't find a place for bodyPart")
 
 
     def getSnakeVision(self) -> tuple[tuple]:
