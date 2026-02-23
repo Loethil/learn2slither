@@ -2,6 +2,7 @@ import numpy as np
 import random
 from dataclasses import dataclass
 from classes.snake import Snake
+from utils import bucketize
 
 
 def randRow(y) -> int:
@@ -92,17 +93,39 @@ class Env:
                 if self.board[newBodyPartY, newBodyPartX] == '0':
                     self.board[newBodyPartY, newBodyPartX] = 'S'
                     return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
-        print(self.board)
-        print("error can't find a place for bodyPart")
+
+
+    def look(self, start, delta) -> tuple:
+        row, col = start
+        distance = 0
+        while True:
+            row += delta[0]
+            col += delta[1]
+            distance += 1
+            if row < 0 or row >= self.boardY or col < 0 or col >= self.boardX:
+                return ('W', distance)
+            cell = self.board[row, col]
+            if cell != '0':
+                return (cell, distance)
 
 
     def getSnakeVision(self) -> tuple[tuple]:
-        posX = self.snake.snakeBody[0].x
-        posY = self.snake.snakeBody[0].y
+        relatives = {
+            (-1, 0): ((-1, 0), (0, -1), (0, 1)),   # va UP    : front=UP,    left=LEFT,  right=RIGHT
+            (1, 0):  ((1, 0),  (0, 1),  (0, -1)),   # va DOWN  : front=DOWN,  left=RIGHT, right=LEFT
+            (0, -1): ((0, -1), (1, 0),  (-1, 0)),   # va LEFT  : front=LEFT,  left=DOWN,  right=UP
+            (0, 1):  ((0, 1),  (-1, 0), (1, 0)),    # va RIGHT : front=RIGHT, left=UP,    right=DOWN
+        }
+        snakeHead = [self.snake.snakeBody[0].y, self.snake.snakeBody[0].x]
 
-        up = tuple(str(self.board[y][posX]) for y in range(posY - 1, -1, -1))
-        down = tuple(str(self.board[y][posX]) for y in range(posY + 1, self.boardY))
-        left = tuple(str(self.board[posY][x]) for x in range(posX - 1, -1, -1))
-        right = tuple(str(self.board[posY][x]) for x in range(posX + 1, self.boardX))
+        frontDir, leftDir, rightDir = relatives[self.snake.direction]
+        frontType, frontDist = self.look(snakeHead, frontDir)
+        leftType,  leftDist  = self.look(snakeHead, leftDir)
+        rightType, rightDist = self.look(snakeHead, rightDir)
 
-        return (up, down, left, right)
+        state = (
+            (frontType, bucketize(frontDist)),
+            (leftType,  bucketize(leftDist)),
+            (rightType, bucketize(rightDist)),
+        )
+        return state

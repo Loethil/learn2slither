@@ -10,10 +10,10 @@ GRID_WEIGHT = 32
 
 WINDOW_SIZE = (GRID_WIDTH * CELL_SIZE, GRID_WEIGHT * CELL_SIZE)
 
-UP = (0, -1)
-DOWN = (0, 1)
-LEFT = (-1, 0)
-RIGHT = (1, 0)
+UP = (-1, 0)   #Y, X A CHANGER
+DOWN = (1, 0)
+LEFT = (0, -1)
+RIGHT = (0, 1)
 
 clock = pygame.time.Clock()
 
@@ -57,6 +57,7 @@ class Game:
         self.env.refreshBoard()
         printBoard(self.env.board)
         self.env.snake.vision = self.env.getSnakeVision()
+        print(self.env.snake.vision)
         time.sleep(0.2)
 
 
@@ -66,8 +67,8 @@ class Game:
 
 
     def onMoved(self, dir: tuple[int, int]) -> None:
-        nextX = self.env.snake.snakeBody[0].x + dir[0]
-        nextY = self.env.snake.snakeBody[0].y + dir[1]
+        nextY = self.env.snake.snakeBody[0].y + dir[0]
+        nextX = self.env.snake.snakeBody[0].x + dir[1]
         snakeMeal = self.env.board[nextY, nextX]
         if self.env.snake.length > 1:
             if nextX == self.env.snake.snakeBody[1].x and nextY == self.env.snake.snakeBody[1].y:

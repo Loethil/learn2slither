@@ -9,28 +9,31 @@ class SnakeBody:
 class Snake:
     def __init__(self, snakeBody: list[SnakeBody]):
         self.snakeBody: list[SnakeBody] = snakeBody
+        self.direction: tuple[int, int] = self.getBaseDirection()
         self.length: int = len(snakeBody)
         self.vision = None
     
 
-    #fonction pour avancer d'une case selon une direction donner
     def advance(self, dir: tuple[int, int]) -> None:
         for i in range(self.length - 1, -1, -1):
             if self.snakeBody[i].value == 'H':
-                self.snakeBody[i].x += dir[0]
-                self.snakeBody[i].y += dir[1]
+                self.snakeBody[i].y += dir[0]
+                self.snakeBody[i].x += dir[1]
+                self.direction = dir
             else:
-                self.snakeBody[i].x = self.snakeBody[i - 1].x
                 self.snakeBody[i].y = self.snakeBody[i - 1].y
+                self.snakeBody[i].x = self.snakeBody[i - 1].x
 
 
-    #fonction pour retrecir le snake
     def shrink(self) -> None:
         self.snakeBody.pop()
         self.length = len(self.snakeBody)
 
 
-    #fonction pour agrandire le snake
     def grow(self, newBodyPart) -> None:
         self.snakeBody.append(newBodyPart)
         self.length = len(self.snakeBody)
+
+
+    def getBaseDirection(self) -> tuple [int, int]:
+        return (self.snakeBody[0].y - self.snakeBody[1].y, self.snakeBody[0].x - self.snakeBody[1].x)
