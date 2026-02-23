@@ -2,15 +2,14 @@ import numpy as np
 import random
 from dataclasses import dataclass
 from classes.snake import Snake
-from utils import bucketize
+from utils import bucketize, randCol, randRow
 
-
-def randRow(y) -> int:
-    return np.random.randint(1, y - 1)
-
-
-def randCol(x) -> int:
-    return np.random.randint(1, x - 1)
+RELATIVES = {
+    (-1, 0): ((-1, 0), (0, -1), (0, 1)),   # va UP    : front=UP,    left=LEFT,  right=RIGHT
+    (1, 0):  ((1, 0),  (0, 1),  (0, -1)),   # va DOWN  : front=DOWN,  left=RIGHT, right=LEFT
+    (0, -1): ((0, -1), (1, 0),  (-1, 0)),   # va LEFT  : front=LEFT,  left=DOWN,  right=UP
+    (0, 1):  ((0, 1),  (-1, 0), (1, 0)),    # va RIGHT : front=RIGHT, left=UP,    right=DOWN
+}
 
 
 @dataclass
@@ -110,15 +109,9 @@ class Env:
 
 
     def getSnakeVision(self) -> tuple[tuple]:
-        relatives = {
-            (-1, 0): ((-1, 0), (0, -1), (0, 1)),   # va UP    : front=UP,    left=LEFT,  right=RIGHT
-            (1, 0):  ((1, 0),  (0, 1),  (0, -1)),   # va DOWN  : front=DOWN,  left=RIGHT, right=LEFT
-            (0, -1): ((0, -1), (1, 0),  (-1, 0)),   # va LEFT  : front=LEFT,  left=DOWN,  right=UP
-            (0, 1):  ((0, 1),  (-1, 0), (1, 0)),    # va RIGHT : front=RIGHT, left=UP,    right=DOWN
-        }
         snakeHead = [self.snake.snakeBody[0].y, self.snake.snakeBody[0].x]
 
-        frontDir, leftDir, rightDir = relatives[self.snake.direction]
+        frontDir, leftDir, rightDir = RELATIVES[self.snake.direction]
         frontType, frontDist = self.look(snakeHead, frontDir)
         leftType,  leftDist  = self.look(snakeHead, leftDir)
         rightType, rightDist = self.look(snakeHead, rightDir)

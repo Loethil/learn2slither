@@ -4,7 +4,7 @@ import random
 
 class Agent:
     def __init__(self, episode: int):
-        self.Qtable = defaultdict(lambda: [0.0, 0.0, 0.0, 0.0])
+        self.Qtable = defaultdict(lambda: [0.0, 0.0, 0.0])
         self.epsilon: float = 1
         self.epsilonMin: float = 0.1
         self.episode: int = episode
@@ -15,7 +15,7 @@ class Agent:
         if self.epsilon < np.random.rand() and np.max(self.Qtable[state]) != 0:
             action = np.argmax(self.Qtable[state])
         else:
-            action = random.randint(0, 3)
+            action = random.randint(0, 2)
 
         if self.epsilon > self.epsilonMin:
             self.epsilon *= self.alpha

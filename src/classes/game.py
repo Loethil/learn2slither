@@ -1,6 +1,6 @@
 import pygame
 import time
-from classes.environment import Env
+from classes.environment import Env, RELATIVES
 from classes.agent import Agent
 from renderer import drawGrid, printBoard
 
@@ -44,21 +44,15 @@ class Game:
 
 
     def onAgentDecision(self) -> None:
-        direction = self.agent.decision(self.env.snake.vision)
-        match direction:
-            case 0:
-                self.onMoved(UP)
-            case 1:
-                self.onMoved(DOWN)
-            case 2:
-                self.onMoved(LEFT)
-            case 3:
-                self.onMoved(RIGHT)
+        action = self.agent.decision(self.env.snake.vision)
+        current_dir = self.env.snake.direction
+        absolute_dir = RELATIVES[current_dir][action]
+        self.onMoved(absolute_dir)
         self.env.refreshBoard()
         printBoard(self.env.board)
         self.env.snake.vision = self.env.getSnakeVision()
         print(self.env.snake.vision)
-        time.sleep(0.2)
+        time.sleep(0.4)
 
 
     def onEvent(self, event) -> None:
