@@ -3,14 +3,25 @@ import numpy as np
 import random
 
 class Agent:
-    def __init__(self, episode: int):
+    def __init__(self, QLoadPath: str, QSavePath: str):
+        if QLoadPath:
+            self.Qtable = self.loadQTable(QLoadPath)
+        self.QSavePath = QSavePath
         self.Qtable = defaultdict(lambda: [0.0, 0.0, 0.0])
         self.epsilon: float = 1
         self.epsilonMin: float = 0.1
         self.epsilonDecay: float = 0.995
-        self.episode: int = episode
         self.gamma: float = 0.9
         self.alpha: float = 0.1
+
+
+    def loadQTable(self, QLoadPath: str) -> dict:
+        print(f"UNDER CONSTRUCT 'loadQTable': {QLoadPath}")
+
+    
+    def saveQTable(self, QSavePath: str) -> None:
+        print(f"UNDER CONSTRUCT 'saveQTable': {QSavePath}")
+
 
     def decision(self, state: tuple[tuple])  -> int:
         if self.Qtable.get(state) is None:

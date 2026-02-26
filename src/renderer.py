@@ -1,8 +1,9 @@
 import os
 import pygame
 
-def printBoard(board) -> None:
-    # os.system('clear')
+def printBoard(board, sessions, sessionsMax) -> None:
+    os.system('clear')
+    print(f"SESSIONS: {sessions}/{sessionsMax}")
     for row in board:
         for cell in row:
             match cell:
