@@ -126,7 +126,7 @@ class Env:
             distance += 1
             if row < 0 or row >= self.boardSize or col < 0 or col >= self.boardSize:
                 return ('W', distance)
-            cell = self.board[row, col]
+            cell = str(self.board[row, col])
             if cell != '0':
                 return (cell, distance)
 

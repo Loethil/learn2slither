@@ -1,4 +1,5 @@
 import pygame
+import os
 import time
 from classes.environment import Env, RELATIVES
 from classes.agent import Agent
@@ -49,6 +50,8 @@ class Game:
             self.onAgentDecision()
             self.display()
             time.sleep(self.speed)
+        if self.savePath:
+            self.agent.saveQTable(self.savePath)
 
 
     def onAgentDecision(self):
@@ -79,6 +82,8 @@ class Game:
 
     def display(self) -> None:
         if self.visual == "pygame":
+            os.system('clear')
+            print(f"SESSIONS: {self.sessions}/{self.sessionsMax}")
             drawGrid(self.screen, self.env.board, CELL_SIZE)
             pygame.display.flip()
             clock.tick(10)
