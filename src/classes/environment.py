@@ -27,6 +27,7 @@ class Env:
         self.board: np.ndarray = self.createBoard()
         self.snakeLength = snakeLength
         self.snake: Snake = Snake(self.createSnakeBody())
+        self.refreshBoard()
         self.snake.vision = self.getSnakeVision()
         self.addAppleOnBoard('G')
         self.addAppleOnBoard('G')

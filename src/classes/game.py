@@ -23,7 +23,7 @@ class Game:
         self.visual = visual
         self.env = Env(boardXLength, boardYLength, snakeLength)
         self.agent = Agent(10)
-
+        self.gen = 0
         self._running = True
         pygame.init()
         if self.visual:
@@ -46,6 +46,7 @@ class Game:
                 self.onEvent(event)
             self.onAgentDecision()
             self.display()
+            time.sleep(0)
 
 
     def onAgentDecision(self):
@@ -53,15 +54,17 @@ class Game:
         action = self.agent.decision(state)
         current_dir = self.env.snake.direction
         absolute_dir = RELATIVES[current_dir][action]
-        
         reward, lose = self.env.step(absolute_dir)
+        self.env.refreshBoard()
         if lose:
+            if self.env.snake.length != 0:
+                next_state = self.env.getSnakeVision()
+                self.agent.learn(state, action, reward, next_state)
             self.resetGame()
             return
-        self.env.refreshBoard()
         next_state = self.env.getSnakeVision()
-        # self.agent.learn(state, action, reward, next_state)
-        time.sleep(0.2)
+        self.agent.learn(state, action, reward, next_state)
+        self.env.snake.vision = next_state
 
 
     def onEvent(self, event) -> None:
@@ -71,7 +74,8 @@ class Game:
 
     def resetGame(self) -> None:
         self.env = Env(self.boardXLength, self.boardYLength, self.snakeLength)
-
+        self.gen += 1
+        print(f"Generation : {self.gen}")
 
     def onCleanup(self) -> None:
         pygame.quit()
