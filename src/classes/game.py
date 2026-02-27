@@ -31,8 +31,8 @@ class Game:
         self.stepByStep = stepByStep 
         self.speed = speed           # DONE
         self.boardSize = boardSize   # DONE
-        self.savePath = savePath             # UNDER CONSTRUCT
-        self.loadPath = loadPath             # UNDER CONSTRUCT
+        self.savePath = savePath     # DONE
+        self.loadPath = loadPath     # DONE
         
         self.snakeLength = SNAKE_LENGTH
         self.env = Env(boardSize, SNAKE_LENGTH)

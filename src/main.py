@@ -13,7 +13,6 @@ def main() -> None:
         parser.add_argument("-save", type=str, help="Path for saving the model")
         parser.add_argument("-load", type=str, help="Load an existing model for testing it")
         args = parser.parse_args()
-        print(args.load, args.save)
         game = Game(args.sessions,
                     args.visual,
                     args.dontLearn,

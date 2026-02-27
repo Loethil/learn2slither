@@ -21,15 +21,17 @@ class Agent:
         with open(QLoadPath, 'rb') as f:
             data = pickle.load(f)
             self.Qtable = defaultdict(lambda: [0.0, 0.0, 0.0], data['qtable'])
-            self.epsilon = data['epsilon']
-        print(f"Load trained model from {QLoadPath}")
+            # self.epsilon = data['epsilon']
+            self.epsilon = 0
+            print(f"Load trained model from {QLoadPath}")
+
 
     def saveQTable(self, QSavePath: str) -> None:
         data = {'qtable': dict(self.Qtable),
                 'epsilon': self.epsilon}
         with open(QSavePath, 'wb') as f:
             pickle.dump(data, f)
-        print(f"Save learning state in {QSavePath}")
+            print(f"Save learning state in {QSavePath}")
 
 
     def decision(self, state: tuple[tuple])  -> int:
@@ -38,12 +40,12 @@ class Agent:
         if self.epsilon < np.random.rand() and np.max(self.Qtable[state]) != 0:
             action = np.argmax(self.Qtable[state])
         else:
-            # print("random")
             action = random.randint(0, 2)
 
         if self.epsilon > self.epsilonMin:
             self.epsilon *= self.epsilonDecay
         return action
+
 
     def learn(self, state, action, reward, next_state) -> None:
         target = reward + self.gamma * max(self.Qtable[next_state])
