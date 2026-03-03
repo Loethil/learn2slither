@@ -9,6 +9,7 @@ class SnakeBody:
 class Snake:
     def __init__(self, snakeBody: list[SnakeBody]):
         self.snakeBody: list[SnakeBody] = snakeBody
+        self.headY, self.headX = self.snakeBody[0].y, self.snakeBody[0].x
         self.direction: tuple[int, int] = self.getBaseDirection()
         self.length: int = len(snakeBody)
         self.vision = None
@@ -19,6 +20,7 @@ class Snake:
             if self.snakeBody[i].value == 'H':
                 self.snakeBody[i].y += dir[0]
                 self.snakeBody[i].x += dir[1]
+                self.headY, self.headX = self.snakeBody[i].y, self.snakeBody[i].x
                 self.direction = dir
             else:
                 self.snakeBody[i].y = self.snakeBody[i - 1].y

@@ -134,7 +134,7 @@ class Env:
 
 
     def getSnakeVision(self) -> tuple[tuple]:
-        snakeHead = [self.snake.snakeBody[0].y, self.snake.snakeBody[0].x]
+        snakeHead = [self.snake.headY, self.snake.headX]
 
         frontDir, leftDir, rightDir = RELATIVES[self.snake.direction]
         frontType, frontDist = self.look(snakeHead, frontDir)

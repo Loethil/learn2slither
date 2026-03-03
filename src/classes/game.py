@@ -24,15 +24,15 @@ class Game:
                  boardSize: int,
                  savePath: str,
                  loadPath: str) -> None:
-        self.sessionsMax = sessions  # DONE
-        self.sessions = 0            # DONE
-        self.visual = visual         # DONE
-        self.dontLearn = dontLearn   # DONE
-        self.stepByStep = stepByStep 
-        self.speed = speed           # DONE
-        self.boardSize = boardSize   # DONE
-        self.savePath = savePath     # DONE
-        self.loadPath = loadPath     # DONE
+        self.sessionsMax = sessions  
+        self.sessions = 0            
+        self.visual = visual         
+        self.dontLearn = dontLearn   
+        self.stepByStep = stepByStep #NOT IMPLEMENTED
+        self.speed = speed           
+        self.boardSize = boardSize   
+        self.savePath = savePath     
+        self.loadPath = loadPath     
         
         self.snakeLength = SNAKE_LENGTH
         self.env = Env(boardSize, SNAKE_LENGTH)
@@ -62,17 +62,13 @@ class Game:
         reward, lose = self.env.step(absoluteDir)
         self.env.refreshBoard()
 
-        if lose:
-            if self.env.snake.length != 0:
-                next_state = self.env.getSnakeVision()
-                self.agent.learn(state, action, reward, next_state)
-            self.resetGame()
-            return
-
         next_state = self.env.getSnakeVision()
         if self.dontLearn is False:
             self.agent.learn(state, action, reward, next_state)
         self.env.snake.vision = next_state
+
+        if lose:
+            self.resetGame()
 
 
     def resetGame(self) -> None:
