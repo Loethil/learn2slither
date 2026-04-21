@@ -12,6 +12,7 @@ class Snake:
         self.headY, self.headX = self.snakeBody[0].y, self.snakeBody[0].x
         self.direction: tuple[int, int] = self.getBaseDirection()
         self.length: int = len(snakeBody)
+        self.duration: int = 0
         self.vision = None
     
 

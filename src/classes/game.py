@@ -32,6 +32,8 @@ class Game:
         self.snakeLength = SNAKE_LENGTH
         self.env = Env(boardSize, SNAKE_LENGTH)
         self.agent = Agent(loadPath, savePath)
+        self.snakeMaxDuration = 0
+        self.snakeMaxLength = 0
 
         if self.visual == "pygame":
             self.initPygame()
@@ -45,6 +47,7 @@ class Game:
             self.onAgentDecision()
             self.display()
             time.sleep(self.speed)
+        print(f"Game Over, max length = {self.snakeMaxLength}, max duration = {self.snakeMaxDuration}")
         if self.savePath:
             self.agent.saveQTable(self.savePath)
 
@@ -64,9 +67,14 @@ class Game:
 
         if lose:
             self.resetGame()
+        self.env.snake.duration += 1
 
 
     def resetGame(self) -> None:
+        if self.snakeMaxLength < self.env.snake.length:
+            self.snakeMaxLength = self.env.snake.length
+        if self.snakeMaxDuration < self.env.snake.duration:
+            self.snakeMaxDuration = self.env.snake.duration
         self.env = Env(self.boardSize, self.snakeLength)
         self.sessions += 1
 
