@@ -5,12 +5,7 @@ from classes.environment import Env, RELATIVES
 from classes.agent import Agent
 from renderer import drawGrid, printBoard
 
-CELL_SIZE = 50
-GRID_WIDTH = 32
-GRID_WEIGHT = 32
-
-WINDOW_SIZE = (GRID_WIDTH * CELL_SIZE, GRID_WEIGHT * CELL_SIZE)
-
+CELL_SIZE = 40
 SNAKE_LENGTH = 3
 
 clock = pygame.time.Clock()
@@ -24,20 +19,20 @@ class Game:
                  boardSize: int,
                  savePath: str,
                  loadPath: str) -> None:
-        self.sessionsMax = sessions  
-        self.sessions = 0            
-        self.visual = visual         
-        self.dontLearn = dontLearn   
+        self.sessionsMax = sessions
+        self.sessions = 0         
+        self.visual = visual   
+        self.dontLearn = dontLearn
         self.stepByStep = stepByStep #NOT IMPLEMENTED
-        self.speed = speed           
-        self.boardSize = boardSize   
-        self.savePath = savePath     
-        self.loadPath = loadPath     
-        
+        self.speed = speed
+        self.boardSize = boardSize
+        self.savePath = savePath   
+        self.loadPath = loadPath
+
         self.snakeLength = SNAKE_LENGTH
         self.env = Env(boardSize, SNAKE_LENGTH)
         self.agent = Agent(loadPath, savePath)
-        
+
         if self.visual == "pygame":
             self.initPygame()
 
@@ -77,9 +72,9 @@ class Game:
 
 
     def display(self) -> None:
+        os.system('clear')
+        print(f"SESSIONS: {self.sessions}/{self.sessionsMax}")
         if self.visual == "pygame":
-            os.system('clear')
-            print(f"SESSIONS: {self.sessions}/{self.sessionsMax}")
             drawGrid(self.screen, self.env.board, CELL_SIZE)
             pygame.display.flip()
             clock.tick(10)
@@ -95,7 +90,8 @@ class Game:
     def initPygame(self) -> None:
         self._running = True
         pygame.init()
-        self.screen = pygame.display.set_mode(WINDOW_SIZE)
+        window_size = (self.boardSize * CELL_SIZE, self.boardSize * CELL_SIZE)
+        self.screen = pygame.display.set_mode(window_size)
         self.screen.fill((0, 0, 0))
 
 
