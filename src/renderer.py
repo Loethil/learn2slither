@@ -1,8 +1,6 @@
-import os
 import pygame
 
 def printBoard(board, sessions, sessionsMax) -> None:
-    os.system('clear')
     print(f"SESSIONS: {sessions}/{sessionsMax}")
     for row in board:
         for cell in row:
@@ -45,6 +43,7 @@ def printBoard(board, sessions, sessionsMax) -> None:
 #             )
 #             pygame.draw.rect(screen, color, rect)
 
+#a Refaire
 def drawGrid(screen, grid, CELL_SIZE) -> None:
     # Trouver les positions du serpent pour connecter les segments
     head_pos = None

@@ -80,7 +80,6 @@ class Game:
 
 
     def display(self) -> None:
-        os.system('clear')
         print(f"SESSIONS: {self.sessions}/{self.sessionsMax}")
         if self.visual == "pygame":
             drawGrid(self.screen, self.env.board, CELL_SIZE)
