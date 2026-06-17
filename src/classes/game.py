@@ -1,5 +1,3 @@
-from typing import Literal
-
 import pygame
 import time
 from classes.environment import Env, RELATIVES
@@ -15,17 +13,16 @@ class Game:
     def __init__(self, sessions: int,
                  visual: str,
                  dontLearn: bool, 
-                 stepByStep: bool,
                  speed: int,
                  boardSize: int,
                  debug: bool,
                  savePath: str,
                  loadPath: str) -> None:
         self.sessionsMax = sessions
-        self.sessions = 0         
+        self.sessions = 0
         self.visual = visual   
         self.dontLearn = dontLearn
-        self.stepByStep = stepByStep #NOT IMPLEMENTED
+        self.stepByStep = False
         self.speed = speed
         self.boardSize = boardSize
         self.debug = debug
@@ -38,22 +35,63 @@ class Game:
         self.snakeMaxDuration = 0
         self.snakeMaxLength = 3
 
+        self._running = True
         if self.visual == "pygame":
             self.initPygame()
 
 
+    def initPygame(self) -> None:
+        pygame.init()
+        window_size = (self.boardSize * CELL_SIZE, self.boardSize * CELL_SIZE)
+        self.screen = pygame.display.set_mode(window_size)
+        self.screen.fill((0, 0, 0))
+
+
     def onExecute(self) -> None:
         self.display()
-        while(self.sessions < self.sessionsMax):
+        print(f"SESSIONS: {self.sessions + 1}/{self.sessionsMax}")
+        while self._running and self.sessions < self.sessionsMax:
             if self.visual == "pygame":
-                for event in pygame.event.get():
-                    self.onEvent(event)
-            if self.onAgentDecision() is False:
+                self.handleInput()
+            if not self._running:
+                break
+            lose = self.onAgentDecision()
+            self.display()
+            if lose:
+                self.resetGame()
                 self.display()
-            time.sleep(self.speed)
+            if not self.stepByStep:
+                time.sleep(self.speed)
         print(f"Game Over, max length = {self.snakeMaxLength}, max duration = {self.snakeMaxDuration}")
         if self.savePath:
             self.agent.saveQTable(self.savePath)
+
+
+    def handleInput(self) -> None:
+        if self.stepByStep:
+            self._stepAdvance = False
+            while self._running and self.stepByStep and not self._stepAdvance:
+                for event in pygame.event.get():
+                    self.onEvent(event)
+                pygame.time.wait(10)
+        else:
+            for event in pygame.event.get():
+                self.onEvent(event)
+
+
+    def onEvent(self, event) -> None:
+        if event.type == pygame.QUIT:
+            self._running = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            self._stepAdvance = True
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            if self.stepByStep:
+                self.stepByStep = False
+            else:
+                self.stepByStep = True
+            print(self.stepByStep)
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            self._running = False
 
 
     def onAgentDecision(self) -> bool:
@@ -70,7 +108,6 @@ class Game:
         self.env.snake.vision = next_state
 
         if lose:
-            self.resetGame()
             return True
         self.env.snake.duration += 1
         return False
@@ -83,10 +120,10 @@ class Game:
             self.snakeMaxDuration = self.env.snake.duration
         self.env = Env(self.boardSize, self.snakeLength)
         self.sessions += 1
+        print(f"SESSIONS: {self.sessions + 1}/{self.sessionsMax}")
 
 
     def display(self) -> None:
-        print(f"SESSIONS: {self.sessions}/{self.sessionsMax}")
         if self.visual == "pygame":
             drawGrid(self.screen, self.env.board, CELL_SIZE)
             pygame.display.flip()
@@ -95,19 +132,6 @@ class Game:
             printBoard(self.env.board)
         if self.debug:
             debugVision(self.env.board, self.env.snake.headY, self.env.snake.headX, self.env.snake.vision)
-
-
-    def onEvent(self, event) -> None:
-        if event.type == pygame.QUIT:
-            self._running = False
-
-
-    def initPygame(self) -> None:
-        self._running = True
-        pygame.init()
-        window_size = (self.boardSize * CELL_SIZE, self.boardSize * CELL_SIZE)
-        self.screen = pygame.display.set_mode(window_size)
-        self.screen.fill((0, 0, 0))
 
 
     def onCleanup(self) -> None:
