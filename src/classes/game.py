@@ -1,8 +1,10 @@
+from typing import Literal
+
 import pygame
 import time
 from classes.environment import Env, RELATIVES
 from classes.agent import Agent
-from renderer import drawGrid, printBoard
+from renderer import drawGrid, printBoard, debugVision
 
 CELL_SIZE = 40
 SNAKE_LENGTH = 3
@@ -34,26 +36,27 @@ class Game:
         self.env = Env(boardSize, SNAKE_LENGTH)
         self.agent = Agent(loadPath, savePath)
         self.snakeMaxDuration = 0
-        self.snakeMaxLength = 0
+        self.snakeMaxLength = 3
 
         if self.visual == "pygame":
             self.initPygame()
 
 
     def onExecute(self) -> None:
+        self.display()
         while(self.sessions < self.sessionsMax):
             if self.visual == "pygame":
                 for event in pygame.event.get():
                     self.onEvent(event)
-            self.onAgentDecision()
-            self.display()
+            if self.onAgentDecision() is False:
+                self.display()
             time.sleep(self.speed)
         print(f"Game Over, max length = {self.snakeMaxLength}, max duration = {self.snakeMaxDuration}")
         if self.savePath:
             self.agent.saveQTable(self.savePath)
 
 
-    def onAgentDecision(self):
+    def onAgentDecision(self) -> bool:
         state = self.env.snake.vision
         action = self.agent.decision(state)
 
@@ -68,9 +71,9 @@ class Game:
 
         if lose:
             self.resetGame()
-        if self.debug:
-            print(next_state)
+            return True
         self.env.snake.duration += 1
+        return False
 
 
     def resetGame(self) -> None:
@@ -89,7 +92,9 @@ class Game:
             pygame.display.flip()
             clock.tick(10)
         elif self.visual == "terminal":
-            printBoard(self.env.board, self.sessions, self.sessionsMax)
+            printBoard(self.env.board)
+        if self.debug:
+            debugVision(self.env.board, self.env.snake.headY, self.env.snake.headX, self.env.snake.vision)
 
 
     def onEvent(self, event) -> None:

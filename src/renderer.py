@@ -1,7 +1,30 @@
 import pygame
 
-def printBoard(board, sessions, sessionsMax) -> None:
-    print(f"SESSIONS: {sessions}/{sessionsMax}")
+def debugVision(board, snakeY, snakeX, snakeVision) -> None:
+    print()
+    for y, row in enumerate(board):
+        for x, cell in enumerate(row):
+            if y == snakeY or x == snakeX:
+                match cell:
+                    case 'W':
+                        print(f"\033[33m{cell}\033[0m", end=' ')
+                    case 'G':
+                        print(f"\033[32m{cell}\033[0m", end=' ')
+                    case 'R':
+                        print(f"\033[31m{cell}\033[0m", end=' ')
+                    case 'H':
+                        print(f"\033[34m{cell}\033[0m", end=' ')
+                    case 'S':
+                        print(f"\033[36m{cell}\033[0m", end=' ')
+                    case '0':
+                        print(f"{cell}", end=' ')
+            else:
+                print(' ', end=' ')
+        print()
+    print(f"FRONT: {snakeVision[0]}, LEFT: {snakeVision[1]}, RIGHT: {snakeVision[2]}")
+    print()
+
+def printBoard(board) -> None:
     for row in board:
         for cell in row:
             match cell:
