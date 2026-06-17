@@ -1,5 +1,4 @@
 import pygame
-import os
 import time
 from classes.environment import Env, RELATIVES
 from classes.agent import Agent
@@ -17,6 +16,7 @@ class Game:
                  stepByStep: bool,
                  speed: int,
                  boardSize: int,
+                 debug: bool,
                  savePath: str,
                  loadPath: str) -> None:
         self.sessionsMax = sessions
@@ -26,6 +26,7 @@ class Game:
         self.stepByStep = stepByStep #NOT IMPLEMENTED
         self.speed = speed
         self.boardSize = boardSize
+        self.debug = debug
         self.savePath = savePath   
         self.loadPath = loadPath
 
@@ -67,6 +68,8 @@ class Game:
 
         if lose:
             self.resetGame()
+        if self.debug:
+            print(next_state)
         self.env.snake.duration += 1
 
 

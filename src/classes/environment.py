@@ -145,5 +145,5 @@ class Env:
             (frontType, bucketize(frontDist)),
             (leftType,  bucketize(leftDist)),
             (rightType, bucketize(rightDist)),
-        )
+        )        
         return state

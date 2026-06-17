@@ -10,6 +10,7 @@ def main() -> None:
         parser.add_argument("-stepByStep", action="store_true", help="Step by step visual for debugging purpose")
         parser.add_argument("-speed", type=float, default=0.0, help="Define the number of time (in second) between each action")
         parser.add_argument("-boardSize", type=int, choices=[10, 15, 20, 25], default=10, help="Size of the board")
+        parser.add_argument("-debug", action="store_true", help="Debug mod to see the snake vision")
         parser.add_argument("-save", type=str, help="Path for saving the model")
         parser.add_argument("-load", type=str, help="Load an existing model for testing it")
         args = parser.parse_args()
@@ -19,6 +20,7 @@ def main() -> None:
                     args.stepByStep,
                     args.speed,
                     args.boardSize,
+                    args.debug,
                     args.save,
                     args.load)
         game.onExecute()
