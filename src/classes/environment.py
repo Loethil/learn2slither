@@ -5,10 +5,10 @@ from classes.snake import Snake
 from utils import bucketize, randCol, randRow
 
 RELATIVES = {
-    (-1, 0): ((-1, 0), (0, -1), (0, 1)),   # va UP    : front=UP,    left=LEFT,  right=RIGHT
-    (1, 0):  ((1, 0),  (0, 1),  (0, -1)),   # va DOWN  : front=DOWN,  left=RIGHT, right=LEFT
-    (0, -1): ((0, -1), (1, 0),  (-1, 0)),   # va LEFT  : front=LEFT,  left=DOWN,  right=UP
-    (0, 1):  ((0, 1),  (-1, 0), (1, 0)),    # va RIGHT : front=RIGHT, left=UP,    right=DOWN
+    (-1, 0): ((-1, 0), (0, -1), (0, 1)),   # go UP    : front=UP,    left=LEFT,  right=RIGHT
+    (1, 0):  ((1, 0),  (0, 1),  (0, -1)),   # go DOWN  : front=DOWN,  left=RIGHT, right=LEFT
+    (0, -1): ((0, -1), (1, 0),  (-1, 0)),   # go LEFT  : front=LEFT,  left=DOWN,  right=UP
+    (0, 1):  ((0, 1),  (-1, 0), (1, 0)),    # go RIGHT : front=RIGHT, left=UP,    right=DOWN
 }
 
 
@@ -79,11 +79,11 @@ class Env:
         newSnakeBody.append(SnakeBody(value='H', x=snakeX, y=snakeY))
         self.board[snakeY, snakeX] = 'H'
         for _ in range(1, self.snakeLength, 1):
-            newSnakeBody.append(self.addBodypartOnBoard(newSnakeBody[-1]))
+            newSnakeBody.append(self.spawnBodyPart(newSnakeBody[-1]))
         return newSnakeBody
 
 
-    def addBodypartOnBoard(self, lastBodyPart: SnakeBody) -> SnakeBody:
+    def spawnBodyPart(self, lastBodyPart: SnakeBody) -> SnakeBody:
         directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         random.shuffle(directions)
         for dx, dy in directions:
@@ -92,6 +92,10 @@ class Env:
                 if self.board[newBodyPartY, newBodyPartX] == '0':
                     self.board[newBodyPartY, newBodyPartX] = 'S'
                     return SnakeBody(value='S', x=newBodyPartX, y=newBodyPartY)
+
+
+    def addBodyPart(self) ->SnakeBody:
+        return SnakeBody('S', self.snake.previous[0], self.snake.previous[1])
 
 
     def step(self, dir) -> tuple[float, bool]:
@@ -107,7 +111,7 @@ class Env:
             case 'S':
                 return (-1.0, True)
             case 'G':
-                self.snake.grow(self.addBodypartOnBoard(self.snake.snakeBody[-1]))
+                self.snake.grow(self.addBodyPart())
                 self.addAppleOnBoard('G')
                 return (1.0, False)
             case 'R':

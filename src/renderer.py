@@ -1,6 +1,17 @@
 import pygame
 
-def debugVision(board, snakeY, snakeX, snakeVision) -> None:
+def strDirection(dir: tuple) -> str:
+    if dir == (-1, 0):
+        return "UP"
+    elif dir == (1, 0):
+        return "DOWN"
+    elif dir == (0, -1):
+        return "LEFT"
+    else:
+        return "RIGHT"
+
+
+def debugVision(board, snakeY, snakeX, snakeVision, absoluteDir) -> None:
     print()
     for y, row in enumerate(board):
         for x, cell in enumerate(row):
@@ -22,7 +33,9 @@ def debugVision(board, snakeY, snakeX, snakeVision) -> None:
                 print(' ', end=' ')
         print()
     print(f"FRONT: {snakeVision[0]}, LEFT: {snakeVision[1]}, RIGHT: {snakeVision[2]}")
+    print(f"Action taken: {strDirection(absoluteDir)}")
     print()
+
 
 def printBoard(board) -> None:
     for row in board:

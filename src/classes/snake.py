@@ -14,9 +14,11 @@ class Snake:
         self.length: int = len(snakeBody)
         self.duration: int = 0
         self.vision = None
+        self.previous = (0, 0)
     
 
     def advance(self, dir: tuple[int, int]) -> None:
+        self.previous = (self.snakeBody[-1].x, self.snakeBody[-1].y)
         for i in range(self.length - 1, -1, -1):
             if self.snakeBody[i].value == 'H':
                 self.snakeBody[i].y += dir[0]
@@ -26,7 +28,6 @@ class Snake:
             else:
                 self.snakeBody[i].y = self.snakeBody[i - 1].y
                 self.snakeBody[i].x = self.snakeBody[i - 1].x
-
 
     def shrink(self) -> None:
         self.snakeBody.pop()

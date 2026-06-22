@@ -32,6 +32,7 @@ class Game:
         self.snakeLength = SNAKE_LENGTH
         self.env = Env(boardSize, SNAKE_LENGTH)
         self.agent = Agent(loadPath, savePath)
+        self.absoluteDir = (0, 0)
         self.snakeMaxDuration = 0
         self.snakeMaxLength = 3
 
@@ -89,7 +90,6 @@ class Game:
                 self.stepByStep = False
             else:
                 self.stepByStep = True
-            print(self.stepByStep)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self._running = False
 
@@ -98,8 +98,8 @@ class Game:
         state = self.env.snake.vision
         action = self.agent.decision(state)
 
-        absoluteDir = RELATIVES[self.env.snake.direction][action]
-        reward, lose = self.env.step(absoluteDir)
+        self.absoluteDir = RELATIVES[self.env.snake.direction][action]
+        reward, lose = self.env.step(self.absoluteDir)
         self.env.refreshBoard()
 
         next_state = self.env.getSnakeVision()
@@ -131,7 +131,7 @@ class Game:
         elif self.visual == "terminal":
             printBoard(self.env.board)
         if self.debug:
-            debugVision(self.env.board, self.env.snake.headY, self.env.snake.headX, self.env.snake.vision)
+            debugVision(self.env.board, self.env.snake.headY, self.env.snake.headX, self.env.snake.vision, self.absoluteDir)
 
 
     def onCleanup(self) -> None:
